@@ -10,9 +10,11 @@ db.Promise = bluebird;
 // mongod --dbpath /home/vagabondi/Pulpit/mongo
 db.connect(config.db.url);
 
-if (config.seed) {
-  require('./services/seed');
-}
+// if (config.seed) {
+//   require('./services/seed');
+// }
+
+require('./middleware/appMiddleware')(app)
 
 app.use('/api', api);
 
