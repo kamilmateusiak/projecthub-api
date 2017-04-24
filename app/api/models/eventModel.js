@@ -17,7 +17,7 @@ var EventSchema = new Schema({
     default: Date.now 
   },
 
-  project: { type: Schema.Types.ObjectId, ref: 'project' }
+  attachments: [{ type: Schema.Types.ObjectId, ref: 'attachment' }]
 
 });
 

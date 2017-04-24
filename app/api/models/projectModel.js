@@ -11,7 +11,9 @@ var ProjectSchema = new Schema({
   date: { 
     type: Date, 
     default: Date.now 
-  }
+  },
+
+  events: [{ type: Schema.Types.ObjectId, ref: 'event' }]
 });
 
 module.exports = mongoose.model('project', ProjectSchema);

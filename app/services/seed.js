@@ -41,44 +41,70 @@ var cleanDB = function() {
 }
 
 var createProjects = function(data) {
-  var promises = projects.map(function(project) {
+  var newProjects = projects.map(function(project) {
     return createDoc(Project, project);
   });
 
-  return Promise.all(promises)
-    .then(function(projects) {
-      return _.merge({projects: projects}, data || {});
-    })
-};
-
-var createEvents = function(data) {
-  var newEvents = events.map(function(event, i) {
-    event.project = data.projects[i]._id;
-    return createDoc(Event, event);
-  });
-
-  return Promise.all(newEvents)
-    .then(function(events) {
-      return _.merge({events: events}, data || {});
+  var addEvent = function(project, event) {
+    project.events.push(event);
+    return new Promise(function(resolve, reject) {
+      project.save(function(err, saved) {
+        return err ? reject(err) : resolve(saved)
+      });
     });
-};
+  };
 
-var createAttachments = function(data) {
-  var newAttachments = attachments.map(function(attachment, i) {
-    attachment.event = data.events[i]._id;
-    return createDoc(Attachment, attachment);
-  });
-
-  return Promise.all(newAttachments)
+  return Promise.all(newProjects)
+    .then(function(projects) {
+      return Promise.all(projects.map(function(project, i){
+        return addEvent(project, data.events[i])
+      }));
+    })
     .then(function() {
       return 'Seeded DB with 3 Projects, 3 Events and 3 Attachments.';
     });
 };
 
+var createEvents = function(data) {
+  var newEvents = events.map(function(event, i) {
+    return createDoc(Event, event);
+  });
+
+  var addAttachment = function(event, attachment) {
+    event.attachments.push(attachment);
+    return new Promise(function(resolve, reject) {
+      event.save(function(err, saved) {
+        return err ? reject(err) : resolve(saved)
+      })
+    })
+  };
+
+  return Promise.all(newEvents)
+    .then(function(events) {
+      return Promise.all(events.map(function(event, i){
+        return addAttachment(event, data.attachments[i])
+      }));
+    })
+    .then(function(events) {
+      return _.merge({events: events}, data || {});
+    })
+};
+
+var createAttachments = function(data) {
+  var newAttachments = attachments.map(function(attachment, i) {
+    return createDoc(Attachment, attachment);
+  });
+
+  return Promise.all(newAttachments)
+    .then(function(attachments) {
+        return _.merge({attachments: attachments}, data || {});
+      })
+};
+
 cleanDB()
-  .then(createProjects)
-  .then(createEvents)
   .then(createAttachments)
+  .then(createEvents)
+  .then(createProjects)
   .then((msg) => {
     console.log(msg)
   })

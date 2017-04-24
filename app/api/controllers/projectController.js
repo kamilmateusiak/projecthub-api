@@ -1,9 +1,15 @@
 const Project = require('../models/projectModel')
 const Event = require('../models/eventModel')
+const Attachment = require('../models/attachmentModel')
 const _ = require('lodash');
 
 exports.params = (req, res, next, name) => {
   Project.findOne({name: name})
+    .populate({
+      path: 'events',
+      populate: { path: 'attachments' }
+    })
+    .exec()
     .then(function(project) {
       if (!project) {
         next(new Error('Can not find project with given id'));
@@ -39,13 +45,6 @@ exports.post = (req, res, next) => {
 }
 
 exports.getOne = function(req, res, next) {
-  Event.find({project: req.project._id})   
-    .then((events) => {
-      let project = JSON.parse(JSON.stringify(req.project))
-      project.events = events
-      return res.json(project)
-    })
-    .catch((err) => {
-      next(err);
-    });
+  let project = req.project   
+  res.json(project)  
 };

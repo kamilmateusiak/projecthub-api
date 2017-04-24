@@ -11,9 +11,7 @@ var AttachmentSchema = new Schema({
   href: {
     type: String,
     required: true
-  },
-
-  event: { type: Schema.Types.ObjectId, ref: 'event' }
+  }
 
 });
 
