@@ -51,6 +51,44 @@ exports.post = (req, res, next) => {
     })
 }
 
+exports.put = function(req, res, next) {
+  var event = req.event;
+  var updateEvent = req.body.event;
+  var updateAttachments = req.body.attachments;
+  let updatedAtts = []
+
+  return Promise.map(updateAttachments, (attachment) => {
+    if (attachment._id) {
+      return Attachment.findOneAndUpdate({'_id': attachment._id}, attachment)
+        .then((item) => {
+          updatedAtts.push(item._id)
+        })
+        .catch((err) => {
+          console.log('Err: ', err, ' Couldnt update existing attachment record')
+        })
+    } else {
+      return Attachment.create(attachment)
+        .then((item) => {
+          updatedAtts.push(item._id)
+        })
+        .catch((err) => {
+          console.log('Err: ', err, ' Couldnt create attachment record')
+        })
+    }
+  })
+  .then(() => {
+    updateEvent.attachments = updatedAtts
+    _.merge(event, updateEvent)
+    event.save(function(err, saved) {
+      if (err) {
+        next(err);
+      } else {
+        res.json(saved);
+      }
+    })
+  })
+};
+
 exports.delete = (req, res, next) => {
   req.event.remove((err, removed) => {
     if (err) {
