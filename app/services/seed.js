@@ -1,9 +1,31 @@
 const Project = require('../api/models/projectModel');
+const User = require('../api/models/userModel')
 const Event = require('../api/models/eventModel');
-const Attachment = require('../api/models/attachmentModel')
+const Attachment = require('../api/models/attachmentModel');
+const {ObjectID} = require('mongodb')
+const jwt = require('jsonwebtoken')
 const _ = require('lodash');
 
 console.log('Seeding the Database');
+
+const userOneId = new ObjectID()
+const userTwoId = new ObjectID()
+const users = [
+  { 
+    _id: userOneId,
+    email: 'kamil@example.com', 
+    password: 'password1',
+    tokens: [{
+      access: 'auth',
+      token: jwt.sign({_id: userOneId, access: 'auth'}, 'abc123').toString()
+    }]
+  },
+  {
+    _id: userTwoId,
+    email: 'test@example.com', 
+    password: 'password2'
+  }
+]
 
 const projects = [
   {name: 'Archicom'},
@@ -38,6 +60,17 @@ var cleanDB = function() {
       return model.remove().exec();
     });
   return Promise.all(cleanPromises);
+}
+
+var createUsers = () => {
+  User.remove({}).then(() => {
+    var userOne = new User(users[0]).save()
+    var userTwo = new User(users[1]).save()
+    return Promise.all([userOne, userTwo])
+  })
+  .then(() => {
+    console.log('Users inserted')
+  })
 }
 
 var createProjects = function(data) {
@@ -108,6 +141,7 @@ cleanDB()
   .then((msg) => {
     console.log(msg)
   })
+  .then(createUsers)
   .catch((err) => {
     console.log(err);
   })
