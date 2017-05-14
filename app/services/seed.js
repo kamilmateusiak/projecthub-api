@@ -4,7 +4,8 @@ const Event = require('../api/models/eventModel');
 const Attachment = require('../api/models/attachmentModel');
 const {ObjectID} = require('mongodb')
 const jwt = require('jsonwebtoken')
-const _ = require('lodash');
+const _ = require('lodash')
+const secret = require('../../config/config').secrets.jwt
 
 console.log('Seeding the Database');
 
@@ -17,7 +18,7 @@ const users = [
     password: 'password1',
     tokens: [{
       access: 'auth',
-      token: jwt.sign({_id: userOneId, access: 'auth'}, 'abc123').toString()
+      token: jwt.sign({_id: userOneId, access: 'auth'}, secret).toString()
     }]
   },
   {

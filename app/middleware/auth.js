@@ -10,7 +10,6 @@ exports.authenticate = (req, res, next) => {
       }
       req.user = user
       req.token = token
-      console.log('theeeeeeeeeeeeeen')
       next()
     })
     .catch((e) => {
