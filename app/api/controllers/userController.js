@@ -28,7 +28,7 @@ exports.login = (req, res, next) => {
     .then((user) => {
       return user.generateAuthToken()
         .then((token) => {
-          res.header('x-auth', token).send(user)
+          res.header('x-auth', token).header('Access-Control-Expose-Headers', 'x-auth').send(user)
         })
     })
     .catch((e) => {
