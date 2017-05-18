@@ -10,7 +10,7 @@ exports.register = (req, res, next) => {
       return user.generateAuthToken()
     })
     .then((token) => {
-      res.header('x-auth', token).send(user)
+      res.header('x-auth', token).header('Access-Control-Expose-Headers', 'x-auth').send(user)
     })
     .catch((e) => {
       res.status(400).send(e)
@@ -45,3 +45,15 @@ exports.logout = (req, res, next) => {
       res.status(400).send()
     }) 
 }
+
+exports.get = (req, res, next) => {
+  User.find({})
+    .then(function(users){
+      let resUsers = _.map(users, (o) => {
+        return _.pick(o, ['email', 'name', 'surname', '_id'])
+      })
+      res.json(resUsers);
+    }, function(err){
+      next(err);
+    });
+};

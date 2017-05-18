@@ -5,7 +5,7 @@ router.param('name', controller.params);
 
 router.route('/')
   .get(controller.get)
-  .post(controller.post)
+  .post((req, res, next) => { console.log(req.acl); next() }, controller.post)
 
 router.route('/:name')
   .get(controller.getOne)
