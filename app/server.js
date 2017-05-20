@@ -34,14 +34,14 @@ mongoose.connect(config.db.url, function ( error ) {
             ]
         }
     ]);
-
+    
     acl.addRoleParents( 'user', 'guest' );
     acl.addRoleParents( 'admin', 'user' );
-});
 
-if (config.seed) {
-  require('./services/seed');
-}
+    if (config.seed) {
+        require('./services/seed')(acl);
+    }
+});
 
 require('./middleware/appMiddleware')(app)
 

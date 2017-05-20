@@ -38,7 +38,7 @@ exports.login = (req, res, next) => {
 
 exports.logout = (req, res, next) => {
   req.user.removeToken(req.token)
-   .then(() => {
+   .then(() => {  
       res.status(200).send()
     })
     .catch((e) => {
