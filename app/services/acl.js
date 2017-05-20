@@ -1,30 +1,33 @@
-const node_acl = require( 'acl' )
-let acl
+var node_acl = require('acl');
+var mongoose = require('mongoose');
+acl = new node_acl(new node_acl.mongodbBackend(mongoose.connection.db, 'acl_'), { debug: function(string) { console.log(string); } });
 
-function _mongo_acl( error, db ) {
-    var mongoBackend = new node_acl.mongodbBackend( db, 'acl_' )
+module.exports = {
+    init: function() {
+        acl.addRoleParents( 'user', 'guest' );
+        acl.addRoleParents( 'admin', 'user' );
 
-    acl = new node_acl( mongoBackend );
+        acl.allow([
+            {
+                roles: 'admin',
+                allows: [
+                    { resources: [ 'api/projects', 'api/projects/:name' ], permissions: '*' },
+                    { resources: [ 'api/events', 'api/events/:id' ], permissions: '*' }
+                ]
+            }, {
+                roles: 'user',
+                allows: []
+            }, {
+                roles: 'guest',
+                allows: [
+                { resources: [ 'api/users/me', 'api/users/register', 'api/users/logout', 'api/users/login', 'api/users/all' ], permissions: '*' },
+                { resources: [ 'api/projects', 'api/projects/:name' ], permissions: 'get' }
+                ]
+            }
+        ]);
+    },
 
-    acl.allow([
-        {
-            roles: 'admin',
-            allows: [
-                { resources: [ '/api/projects', '/api/projects/:name' ], permissions: '*' },
-                { resources: [ '/api/events', '/api/events/:id' ], permissions: '*' }
-            ]
-        }, {
-            roles: 'user',
-            allows: []
-        }, {
-            roles: 'guest',
-            allows: [
-              { resources: [ '/api/users/me', '/api/users/register', '/api/users/logout', '/api/users/login', '/api/users/all' ], permissions: '*' },
-              { resources: [ '/api/projects', '/api/projects/:name' ], permissions: 'get' }
-            ]
-        }
-    ]);
-
-    acl.addRoleParents( 'user', 'guest' );
-    acl.addRoleParents( 'admin', 'user' );
-}
+    getAcl: function() {
+        return acl;
+    }
+};
