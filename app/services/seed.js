@@ -6,7 +6,7 @@ const {ObjectID} = require('mongodb')
 const jwt = require('jsonwebtoken')
 const _ = require('lodash')
 const secret = require('../../config/config').secrets.jwt
-const acl = require('./acl').getAcl();
+const node_acl = require('./acl').getAcl();
 
 console.log('Seeding the Database');
 
@@ -19,18 +19,23 @@ const users = [
     password: 'password1',
     name: 'Kamil',
     surname: 'Mateusiak',
-    roles: ['guest'],
+    roles: ['admin'],
     tokens: [{
       access: 'auth',
       token: jwt.sign({_id: userOneId, access: 'auth'}, secret).toString()
     }]
   },
-  {
+  { 
     _id: userTwoId,
-    email: 'test@example.com', 
-    password: 'password2',
+    email: 'dev@example.com', 
+    password: 'password1',
     name: 'Test',
-    surname: 'Testowy'
+    surname: 'Testowy',
+    roles: ['guest'],
+    tokens: [{
+      access: 'auth',
+      token: jwt.sign({_id: userTwoId, access: 'auth'}, secret).toString()
+    }]
   }
 ]
 
@@ -77,7 +82,7 @@ var createUsers = () => {
   })
   .then((users) => {
     _.forEach(users, (user) => {
-        acl.addUserRoles(user.id, user.roles)
+        node_acl.addUserRoles(user.id, user.roles)
     })
     console.log('Users inserted')
   })

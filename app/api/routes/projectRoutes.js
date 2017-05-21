@@ -1,16 +1,16 @@
 const router = require('express').Router();
 const controller = require('../controllers/projectController');
-const node_acl = require('../../services/acl').getAcl()
-const getUserId = require('../../services/utility').getUserId
+const utility = require('../../services/utility')
+const acl = require('../../services/acl').getAcl();
+const customAclMiddleware = require('../../middleware/customAclMiddleware')
 
 router.param('name', controller.params);
-
+// acl.middleware(2, getUserId), 
 router.route('/')
   .get(controller.get)
-  .post(node_acl.middleware(2, getUserId(req, res)), controller.post)
+  .post(customAclMiddleware, controller.post)
 
 router.route('/:name')
-  .get(controller.getOne)
-
+  .get(customAclMiddleware, controller.getOne)
 
 module.exports = router;

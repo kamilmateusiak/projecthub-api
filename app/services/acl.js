@@ -1,6 +1,7 @@
-var node_acl = require('acl');
+var acl = require('acl');
 var mongoose = require('mongoose');
-acl = new node_acl(new node_acl.mongodbBackend(mongoose.connection.db, 'acl_'), { debug: function(string) { console.log(string); } });
+
+acl = new acl(new acl.mongodbBackend(mongoose.connection.db, 'acl_'))
 
 module.exports = {
     init: function() {
@@ -9,19 +10,19 @@ module.exports = {
 
         acl.allow([
             {
-                roles: 'admin',
+                roles: ['admin'],
                 allows: [
-                    { resources: [ 'api/projects', 'api/projects/:name' ], permissions: '*' },
-                    { resources: [ 'api/events', 'api/events/:id' ], permissions: '*' }
+                    { resources: [ '/api/projects/', '/api/projects/:name' ], permissions: '*' },
+                    { resources: [ '/api/events/', '/api/events/:id' ], permissions: '*' }
                 ]
             }, {
-                roles: 'user',
+                roles: ['user'],
                 allows: []
             }, {
-                roles: 'guest',
+                roles: ['guest'],
                 allows: [
-                { resources: [ 'api/users/me', 'api/users/register', 'api/users/logout', 'api/users/login', 'api/users/all' ], permissions: '*' },
-                { resources: [ 'api/projects', 'api/projects/:name' ], permissions: 'get' }
+                    { resources: [ '/api/users/me', '/api/users/register', '/api/users/logout', '/api/users/login', '/api/users/all' ], permissions: '*' },
+                    { resources: [ '/api/projects/', '/api/projects/:name' ], permissions: 'get' }
                 ]
             }
         ]);
