@@ -20,10 +20,12 @@ var UserSchema = new mongoose.Schema({
         }
     },
     name: {
-        type: String
+        type: String,
+        default: ''
     },
     surname: {
-        type: String
+        type: String,
+        default: ''
     },
     password: {
         type: String,

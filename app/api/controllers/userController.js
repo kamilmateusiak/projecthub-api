@@ -1,11 +1,17 @@
 var User = require('../models/userModel');
+const node_acl = require('../../services/acl').getAcl();
 var _ = require('lodash');
 
 exports.register = (req, res, next) => {
   var body = _.pick(req.body, ['email', 'password'])
   var user = new User(body)
+  console.log(user)
+  user.roles = ['guest']
 
   user.save()
+    .then((newUser) => {
+      return node_acl.addUserRoles(newUser.id, newUser.roles)
+    })
     .then(() => {
       return user.generateAuthToken()
     })
