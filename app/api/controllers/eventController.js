@@ -79,6 +79,7 @@ exports.put = function(req, res, next) {
     }
   })
   .then(() => {
+    event.attachments = []
     updateEvent.attachments = updatedAtts
     event = _.merge(event, updateEvent)
     Event.findOneAndUpdate({'_id': event._id}, event)
