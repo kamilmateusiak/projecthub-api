@@ -4,7 +4,7 @@ var _ = require('lodash')
 customAclMiddleware = (req, res, next) => {
   if (typeof req.headers['user-id'] !== 'undefined') {
     var id = JSON.parse(req.headers['user-id']).replace(/."/, '')
-
+    
     var params
     var values
 

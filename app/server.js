@@ -7,7 +7,7 @@ const app = express();
 
 mongoose.Promise = bluebird;
 // mongod --dbpath /home/vagabondi/Pulpit/mongo
-// "C:\Program Files\MongoDB\Server\3.4\bin\mongod.exe" --dbpath E:\repos\mongodb\data
+// "C:\Program Files\MongoDB\Server\3.4\bin\mongod.exe" --dbpath E:\repos\mongodb
 mongoose.connect(config.db.url)
 
 mongoose.connection.on('connected', function (test) {

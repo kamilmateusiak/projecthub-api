@@ -67,8 +67,10 @@ exports.put = function(req, res, next) {
           console.log('Err: ', err, ' Couldnt update existing attachment record')
         })
     } else {
+      console.log('Nowyyyyyyyyyyyyy')
       return Attachment.create(attachment)
         .then((item) => {
+          console.log(item)
           updatedAtts.push(item._id)
         })
         .catch((err) => {
@@ -78,14 +80,14 @@ exports.put = function(req, res, next) {
   })
   .then(() => {
     updateEvent.attachments = updatedAtts
-    _.merge(event, updateEvent)
-    event.save(function(err, saved) {
-      if (err) {
-        next(err);
-      } else {
+    event = _.merge(event, updateEvent)
+    Event.findOneAndUpdate({'_id': event._id}, event)
+      .then((err, saved) => {
         res.json(saved);
-      }
-    })
+      })
+      .catch((err) => {
+        next(err);
+      })
   })
 };
 
