@@ -3,10 +3,10 @@ const node_acl = require('../../services/acl').getAcl();
 var _ = require('lodash');
 
 exports.register = (req, res, next) => {
-  var body = _.pick(req.body, ['email', 'password'])
+  var body = _.pick(req.body, ['email', 'password', 'name', 'surname'])
   var user = new User(body)
   console.log(user)
-  user.roles = ['guest']
+  user.roles = ['user']
 
   user.save()
     .then((newUser) => {
